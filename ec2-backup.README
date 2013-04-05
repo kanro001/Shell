@@ -1,0 +1,104 @@
+                                        README
+
+Renjie Weng <rweng@stevens.edu>         ec2-backup           cs615_2013Spring
+
+COMMENTARY
+
+    * Design of ec2-backup.sh
+    Set parameters
+	Set environment variables 
+    Set backup volume
+	Set backup instance
+	Run backup instance
+	Attach volume to the instance
+	Mount backup volume to the instance
+	Execute backup
+	Unmount backup volume
+	Detach backup volume
+	Terminate or Stop the instance
+
+	* Parameters and Variables
+	- Usage
+	    ec2-backup.sh [-hv] [-i instance] [-m method] -d dir
+	- Required
+	    EC2_BACKUP_FLAGS_SSH="-i privateKey"
+	- Optinal
+	    EC2_bACKUP_FLAGS_AWS="[-k, --key] keypair [-t, --instance-type] instance_type [-z, --availability-zone] zone"
+
+
+ERROR CODE
+
+    1 -- environment variables , 2 -- local variables , 3 -- execution error
+
+
+TIPS
+
+    1) ` executing quote sign
+
+    2) & indicates that what follows is a file descriptor and not a filename
+	   >& is the syntax to redirect a stream to another file descriptor 
+	   - 0 is stdin. 1 is stdout. 2 is stderr
+	
+	3) silent output >/dev/null
+	   1>/dev/null 2>/dev/null
+	
+	4) regular expression check, command line:  expr "$EC2_BACKUP_FLAGS_AWS" : ''
+	   could also be used to numeric calculation, eg: expr 1 + 1
+
+	5) shell scripts local functions, pass arguments by function "arg1 arg2"; 
+	   in function(){ $* used to get arguments as shell scripts did}
+
+EXAMPLES
+
+	rweng@eva:~/.ec2$ ./ec2-backup.sh -v -m rsync -d ~/cs521/
+	ec2-backup -v -i  -m rsync -d /home/rweng/cs521/
+	EC2_BACKUP_FLAGS_SSH  = -i cs615_Ranger_rsa-keypair
+	EC2_BACKUP_FLAGS_ZONE = -z us-east-1b
+	EC2_BACKUP_FLAGS_AWS  = -k cs615-Ranger-kp -z us-east-1b -t t1.micro
+	backup volume=vol-8c6fb6ff
+	instance=i-8a3212eb
+	Waiting for running...
+	Volume 20130325_14:43:54 is attached
+	ec2-54-234-126-47.compute-1.amazonaws.com
+	backup device= /dev/xvdf
+	directory= /home/rweng/cs521/
+	sending incremental file list
+	/home/
+	/home/rweng/
+	/home/rweng/cs521/
+	/home/rweng/cs521/Pong/
+	/home/rweng/cs521/Pong/Pong.java
+	/home/rweng/cs521/Pong/PongServer.class
+	/home/rweng/cs521/Pong/PongServer.java
+	/home/rweng/cs521/tcpip/
+	/home/rweng/cs521/tcpip/UDPServer.py
+
+	sent 3862 bytes  received 108 bytes  7940.00 bytes/sec
+	total size is 8201  speedup is 2.07
+	INSTANCE        i-8a3212eb      running shutting-down
+
+	---------------------------------------------------------------------
+
+	rweng@eva:~/.ec2$ ./ec2-backup.sh -v -m=rsync -d ~/cs521/
+	ec2-backup.sh: ERROR: bad argument -m=rsync
+
+	---------------------------------------------------------------------
+
+	rweng@eva:~/.ec2$ ./ec2-backup.sh -v -m dd -d ~/cs521/ -i i-7ef4510d
+	ec2-backup -v -i i-7ef4510d -m dd -d /home/rweng/cs521/
+	EC2_BACKUP_FLAGS_SSH  = -i cs615_Ranger_rsa-keypair
+	EC2_BACKUP_FLAGS_ZONE = -z us-east-1b
+	EC2_BACKUP_FLAGS_AWS  = -k cs615-Ranger-kp -z us-east-1b -t t1.micro
+	backup volume=vol-b50fd6c6
+	instance i-7ef4510d existed
+	Volume 20130325_14:03:10 is attached
+	ec2-54-234-105-129.compute-1.amazonaws.com
+	/dev/xvdf
+	directory= /home/rweng/cs521/
+	backup_1364234680.tar
+	6+1 records in
+	6+1 records out
+	3440 bytes (3.4 kB) copied, 6.1644e-05 s, 55.8 MB/s
+	6+1 records in
+	0+1 records out
+	3440 bytes (3.4 kB) copied, 0.00281846 s, 1.2 MB/s
