@@ -5,17 +5,19 @@
 # Renjie Weng <renjie.weng@bomoda.com>
 # Jun 26th, 2013
 
-if [ $# -eq 1 ] 
+if [ $# -eq 2 ] 
 then
     user=$1
+    filename=$2
 else
-    echo `basename $0`: must have one parameter username.
+    echo `basename $0` 2 parameters: username filename
     exit 1
 fi
 
 date=`date +%Y%m%d`
-filename='Jasper.apk'
-filenameToday="Jasper_$date.apk"
+filename="${filename%.*}"
+filenameToday="${filename}_${date}.apk"
+filename="${filename}.apk"
 
 wwwServer='bastion-12.bomoda.com'
 lanServer='10.0.1.55'
